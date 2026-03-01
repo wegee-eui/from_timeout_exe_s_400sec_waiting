@@ -43,10 +43,29 @@
         }
 
         #status-msg {
-            color: white; font-size: 5vw; font-weight: 800;
-            display: block; margin-bottom: 20px; letter-spacing: -0.02em;
+            color: white; 
+            font-size: 5vw; /* 기존 크기 유지 */
+            font-weight: 800;
+            display: inline-block; /* 내용물만큼 박스 너비 확장 */
+            margin-bottom: 20px; 
+            letter-spacing: -0.02em;
+            
+            /* --- 핵심 수정 부분 --- */
+            white-space: nowrap;   /* 줄바꿈 방지 */
+            width: auto;           /* 고정 너비 해제 */
+            max-width: none;       /* 최대 너비 제한 해제 */
         }
 
+        /* 텍스트가 화면보다 넓어질 경우 전체 레이아웃 정렬 보정 */
+        #waiting-content {
+            position: absolute; 
+            top: 50%; 
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center; 
+            width: max-content; /* 컨텐츠의 실제 길이에 박스를 맞춤 */
+            max-width: 95vw;    /* 화면 밖으로 너무 나가지 않게 최소한의 안전장치 */
+        }
         /* 눈 크기를 가로 기준 화면의 70% 정도로 설정 */
         .eyes-wrapper { 
             display: flex; 
@@ -170,7 +189,7 @@
 </div>
 
 <script>
-    const TARGET_SECONDS = 400; 
+    const TARGET_SECONDS = 15; 
     let totalOutTimeMs = 0, outStartTime = null, stayStartTime = Date.now();
     let path = [], isFinished = false, msgTimeout = null;
 
