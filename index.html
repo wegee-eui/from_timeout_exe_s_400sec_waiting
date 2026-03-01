@@ -52,6 +52,8 @@
             width: 150px; 
             aspect-ratio: 1.8 / 1; position: relative;
             display: flex; justify-content: center; align-items: center;
+            /* 눈꺼풀이 눈 밖으로 나가지 않도록 설정 */
+            overflow: hidden; 
         }
         .eye-shape {
             background-color: white; 
@@ -66,6 +68,25 @@
             width: 35%; aspect-ratio: 1 / 1; 
             border-radius: 50%; 
             position: relative; z-index: 5; 
+        }
+
+        /* --- 대기 화면 전용 눈꺼풀 추가 --- */
+        .waiting-eyelid {
+            position: absolute;
+            top: -100%; /* 평소엔 위로 숨김 */
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 10;
+            /* 4초 주기, 0.5초 동안 깜빡임 */
+            animation: waitingBlink 4s infinite;
+        }
+
+        @keyframes waitingBlink {
+            0%, 87.5% { top: -100%; } /* 3.5초 대기 */
+            93.75% { top: 0%; }       /* 0.25초 만에 감김 */
+            100% { top: -100%; }      /* 0.25초 만에 다시 뜸 */
         }
 
         /* --- 결과 화면 --- */
@@ -86,10 +107,9 @@
         }
         .credits a { color: black; text-decoration: underline; }
 
-        /* 버튼 스타일 수정 */
         #download-btn { 
             padding: 12px 28px; background: black; color: white; 
-            border: none; cursor: pointer; font-weight: medium; border-radius: 4px;
+            border: none; cursor: pointer; font-weight: 500; border-radius: 4px;
             letter-spacing: 0.5px;
         }
     </style>
@@ -108,10 +128,12 @@
                 <div class="eye-container">
                     <div class="eye-shape"></div>
                     <div class="pupil"></div>
+                    <div class="waiting-eyelid"></div>
                 </div>
                 <div class="eye-container">
                     <div class="eye-shape"></div>
                     <div class="pupil"></div>
+                    <div class="waiting-eyelid"></div>
                 </div>
             </div>
         </div>
@@ -133,7 +155,6 @@
 </div>
 
 <script>
-    /* 스크립트 로직은 이전과 동일하며 TARGET_SECONDS만 15로 유지됨 */
     const TARGET_SECONDS = 15; 
     let totalOutTimeMs = 0, outStartTime = null, stayStartTime = Date.now();
     let path = [], isFinished = false, msgTimeout = null;
@@ -144,6 +165,7 @@
 
     let angle = 0, amplitude = 25, lastMoveTime = Date.now();
 
+    // 따라다니는 캐릭터 눈 깜빡임 (이미지 교체)
     setInterval(() => {
         if (isFinished) return;
         flyImg.src = 'fly_closed.png';
